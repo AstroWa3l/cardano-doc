@@ -11,7 +11,7 @@ import sys
 kp = koios_python.URLs()
 
 st.title('Cardano Stake Pool Doctor')
-    
+ 
 col1, col2 = st.columns(2)
 
 
@@ -75,3 +75,10 @@ with st.container():
 		check_relays(text_input)
 		check_pledge(text_input)
         
+hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
