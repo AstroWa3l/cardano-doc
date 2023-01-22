@@ -63,12 +63,32 @@ def check_relays(pool_id_bech32):
                         # sys.exit()
                         
 def check_pledge(pool_id_bech32):
-	# get pool info from koios
-	pool_info_df = pd.DataFrame(kp.get_pool_info(pool_id_bech32))
-	if kp.get_account_info(pool_info_df['owners'][0][0])[0]['total_balance'] < pool_info_df.pledge[0]:
-		st.error("Pledge is not met", icon='❌')
-	else:
-		st.success("Pledge is met", icon='✅')
+        
+        pool_info_df = pd.DataFrame(kp.get_pool_info(pool_id_bech32))
+        owners = pool_info_df['owners'][0]
+        owners_balances = [kp.get_account_info(owner)[0]['total_balance'] for owner in owners ]
+
+        if len(owners_balances) == 1:
+                st.write("Single owner")
+                if owners_balances[0] >= pool_info_df.pledge[0]:
+                        st.success("Pledge is met", icon='✅')
+                else:
+                        st.error("Pledge is not met", icon='❌')
+                        
+        if len(owners_balances) > 1:
+                st.write("Multiple owners")
+                success = False
+                for balance in owners_balances:
+                        if balance >= pool_info_df.pledge[0]:
+                                st.success("Pledge is met", icon='✅')
+                                success = True
+                                break
+                        else:
+                                success = False
+                                continue
+                if success == False:
+                        st.error("Pledge is not met", icon='❌')
+                
                         
 with st.container():
 	if text_input:
